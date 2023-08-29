@@ -4,7 +4,10 @@ import { useModalState } from '../../misc/custom-hooks';
 import AvatarEditor from 'react-avatar-editor';
 import ProfileAvatar from './ProfileAvatar';
 const fileInputTypes='.png, .jpeg, .jpg';
-
+import { storage } from '../../misc/firebase';
+import { database } from '../../misc/firebase';
+import { useProfile } from '../../context/profile.context';
+import { getUserUpdate } from '../../misc/helper';
 const acceptedileTypes =['image/png', 'image/jpeg', 'img/pjpeg']
 const isValidFile = (file) => acceptedileTypes.includes(file.types);
 const getBlob = (canvas) => {
@@ -42,8 +45,7 @@ const AvatarUploadBtn = () => {
 
     }
 
-    const onUploadClick = () => {
-       const canvas =  avatarEditorRef.current.getImageScaledToCanvas();
+    const onUploadClick = async () => { const canvas =  avatarEditorRef.current.getImageScaledToCanvas();
        try{
         const blob = await getBlob(canvas);
 
@@ -53,8 +55,11 @@ const AvatarUploadBtn = () => {
         });
 
         const downloadUrl = await uploadAvatarResult.ref.getDownloadURL();
-        const userAvatarRef = database.ref(`/profiles/${profile.uid}`).child('avatar');
-        userAvatarRef.set(downloadUrl);
+
+        const updates = getUserUpdate(profile.uid, 'avatar',downloadUrl, database);
+
+           await database.ref().update(updates);
+       
         setIsLoading(false);
         Alert.info('Avatar has been uploaded', 4000);
     }catch(err){

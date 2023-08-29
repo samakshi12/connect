@@ -12,10 +12,7 @@ const ProviderBlock = () => {
 
     const updateIsConnected= (providerId, value) => {
         setIsConnected(p =>{ 
-            return {
-                ...p,
-                [providerId]:value,
-            };
+            return {...p,[providerId]:value, };
             });
     };
 
@@ -57,8 +54,7 @@ const link = async (provider)=>{
         link(new firebase.auth.GoogleAuthProvider())
     };
      
-  return (
-    <div>
+  return (<div>
     {isConnected['google.com'] && (
     <Tag color="green" closable onClose={unlinkGoogle}>
     <Icon icon="google" /> Connected

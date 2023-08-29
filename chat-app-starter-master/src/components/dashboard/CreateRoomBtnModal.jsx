@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react'
 import { useModalState } from '../../misc/custom-hooks'
 import { Alert, Button, ControlLabel, Form, FormControl, FormGroup, Icon, Modal } from 'rsuite'
-import Schema from 'rsuite'
+import {Schema} from 'rsuite'
 import firebase from 'firebase/app'
 import { database } from '../../misc/firebase'
 
@@ -33,18 +33,23 @@ const CreateRoomBtnModal = () => {
 
         const newRoomdata= {
           ...formValue,
-          createdat:firebase.database.ServerValue.TIMESTAMP
+          createdAt:firebase.database.ServerValue.TIMESTAMP
         }
 
         try{
-           await database.ref('rooms')
+
+           await database.ref('rooms').push(newRoomdata);
+           Alert.info(`${formValue.name} has been created`, 4000); 
+           setIsLoading(false);
+           setFormValue(INITIAL_FORM);
+           close();
+          
         }catch(err){
             setIsLoading(false);
-            Alert.err(err.message, 4000)
+            Alert.error(err.message, 4000)
         }
     }
-  return (
-    <div className='mt-1'>
+  return (<div className='mt-1'>
         <Button block color="green" onClick={open}>
             <Icon icon="creative"/> Create new chat room
         </Button>
@@ -63,14 +68,14 @@ const CreateRoomBtnModal = () => {
                     </FormGroup>
                     <FormGroup>
                         <ControlLabel>Description</ControlLabel>
-                        <FormControl componenClass="textarea" rows={5} name="description" placeholder="Enter chat room..."/>
+                        <FormControl componenClass="textarea" rows={5} name="description" placeholder="Enter room description..."/>
                     </FormGroup>
 
                 </Form>
                 
             </Modal.Body>
             <Modal.Footer>
-                <Button block appearance='primary'>
+                <Button block appearance='primary' onClick={onSubmit} disabled={isLoading}>
                     Create newChat room
                 </Button>
             </Modal.Footer>
@@ -79,4 +84,4 @@ const CreateRoomBtnModal = () => {
   )
 }
 
-export default CreateRoomBtnModal
+export default CreateRoomBtnModal;

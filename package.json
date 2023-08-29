@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "timeago-react": "^3.0.6",
+    "use-context-selector": "^1.4.1"
+  }
+}
